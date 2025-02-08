@@ -5,6 +5,9 @@ const createInterface = require('./createInterface');
 const createComponentInterface = require('./createComponentInterface');
 const { pascalCase, isOptional } = require('./utils');
 
+const args = process.argv.slice(2);
+const isV5 = args.includes('--v5');
+
 const typesDir = 'types';
 
 if (!fs.existsSync(typesDir)) fs.mkdirSync(typesDir);
@@ -32,7 +35,19 @@ fs.writeFileSync(`${typesDir}/Payload.ts`, payloadTsInterface);
 // User
 // --------------------------------------------
 
-const userTsInterface = `export interface User {
+const userTsInterface = isV5
+  ? `export interface User {
+  documentId: number;
+  username: string;
+  email: string;
+  provider: string;
+  confirmed: boolean;
+  blocked: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+`
+  : `export interface User {
   id: number;
   attributes: {
     username: string;
@@ -52,7 +67,7 @@ fs.writeFileSync(`${typesDir}/User.ts`, userTsInterface);
 // MediaFormat
 // --------------------------------------------
 
-var mediaFormatTsInterface = `export interface MediaFormat {
+const mediaFormatTsInterface = `export interface MediaFormat {
   name: string;
   hash: string;
   ext: string;
@@ -71,7 +86,29 @@ fs.writeFileSync(`${typesDir}/MediaFormat.ts`, mediaFormatTsInterface);
 // Media
 // --------------------------------------------
 
-var mediaTsInterface = `import { MediaFormat } from './MediaFormat';
+const mediaTsInterface = isV5
+  ? `import { MediaFormat } from './MediaFormat';
+
+export interface Media {
+  documentId: number;
+  name: string;
+  alternativeText: string;
+  caption: string;
+  width: number;
+  height: number;
+  formats: { thumbnail: MediaFormat; medium: MediaFormat; small: MediaFormat; };
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl: string;
+  provider: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+`
+  : `import { MediaFormat } from './MediaFormat';
 
 export interface Media {
   id: number;
@@ -113,7 +150,8 @@ if (apiFolders)
     const interfaceName = pascalCase(apiFolder);
     const interface = createInterface(
       `./src/api/${apiFolder}/content-types/${apiFolder}/schema.json`,
-      interfaceName
+      interfaceName,
+      isV5
     );
     if (interface)
       fs.writeFileSync(`${typesDir}/${interfaceName}.ts`, interface);
@@ -143,7 +181,8 @@ if (componentCategoryFolders) {
       const interfaceName = pascalCase(componentSchema.replace('.json', ''));
       const interface = createComponentInterface(
         `./src/components/${componentCategoryFolder}/${componentSchema}`,
-        interfaceName
+        interfaceName,
+        isV5
       );
       if (interface)
         fs.writeFileSync(`${targetFolder}/${interfaceName}.ts`, interface);

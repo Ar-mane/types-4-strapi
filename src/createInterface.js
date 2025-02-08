@@ -1,12 +1,14 @@
 const fs = require('fs');
 const { pascalCase, isOptional } = require('./utils');
 
-module.exports = (schemaPath, interfaceName) => {
+module.exports = (schemaPath, interfaceName, isV5) => {
   var tsImports = [];
   var tsInterface = `\n`;
   tsInterface += `export interface ${interfaceName} {\n`;
-  tsInterface += `  id: number;\n`;
-  tsInterface += `  attributes: {\n`;
+  tsInterface += isV5 ? `  documentId: number;\n` : `  id: number;\n`;
+  if (!isV5) {
+    tsInterface += `  attributes: {\n`;
+  }
   var schemaFile;
   var schema;
   try {
@@ -38,7 +40,9 @@ module.exports = (schemaPath, interfaceName) => {
         });
       const isArray = attributeValue.relation.endsWith('ToMany');
       const bracketsIfArray = isArray ? '[]' : '';
-      tsProperty = `    ${attributeName}: { data: ${tsPropertyType}${bracketsIfArray} };\n`;
+      tsProperty = isV5
+        ? `    ${attributeName}: ${tsPropertyType}${bracketsIfArray};\n`
+        : `    ${attributeName}: { data: ${tsPropertyType}${bracketsIfArray} };\n`;
     }
     // -------------------------------------------------
     // Component
@@ -77,9 +81,13 @@ module.exports = (schemaPath, interfaceName) => {
           type: tsPropertyType,
           path: tsImportPath,
         });
-      tsProperty = `    ${attributeName}: { data: ${tsPropertyType}${
-        attributeValue.multiple ? '[]' : ''
-      } };\n`;
+      tsProperty = isV5
+        ? `    ${attributeName}: ${tsPropertyType}${
+            attributeValue.multiple ? '[]' : ''
+          };\n`
+        : `    ${attributeName}: { data: ${tsPropertyType}${
+            attributeValue.multiple ? '[]' : ''
+          } };\n`;
     }
     // -------------------------------------------------
     // Enumeration
@@ -158,9 +166,13 @@ module.exports = (schemaPath, interfaceName) => {
   // -------------------------------------------------
   if (schema.pluginOptions?.i18n?.localized) {
     tsInterface += `    locale: string;\n`;
-    tsInterface += `    localizations?: { data: ${interfaceName}[] }\n`;
+    tsInterface += isV5
+      ? `    localizations?: ${interfaceName}[];\n`
+      : `    localizations?: { data: ${interfaceName}[] };\n`;
   }
-  tsInterface += `  }\n`;
+  if (!isV5) {
+    tsInterface += `  }\n`;
+  }
   tsInterface += '}\n';
   for (const tsImport of tsImports) {
     tsInterface =

@@ -1,11 +1,11 @@
 const fs = require('fs');
 const { pascalCase, isOptional } = require('./utils');
 
-module.exports = (schemaPath, interfaceName) => {
+module.exports = (schemaPath, interfaceName, isV5) => {
   var tsImports = [];
   var tsInterface = `\n`;
   tsInterface += `export interface ${interfaceName} {\n`;
-  tsInterface += `  id: number;\n`;
+  tsInterface += isV5 ? `  documentId: number;\n` : `  id: number;\n`;
   var schemaFile;
   var schema;
   try {
@@ -37,7 +37,9 @@ module.exports = (schemaPath, interfaceName) => {
         });
       const isArray = attributeValue.relation === 'oneToMany';
       const bracketsIfArray = isArray ? '[]' : '';
-      tsProperty = `  ${attributeName}: { data: ${tsType}${bracketsIfArray} };\n`;
+      tsProperty = isV5
+        ? `  ${attributeName}: ${tsType}${bracketsIfArray};\n`
+        : `  ${attributeName}: { data: ${tsType}${bracketsIfArray} };\n`;
     }
     // -------------------------------------------------
     // Component
@@ -68,9 +70,13 @@ module.exports = (schemaPath, interfaceName) => {
           type: tsType,
           path: tsImportPath,
         });
-      tsProperty = `  ${attributeName}: { data: ${tsType}${
-        attributeValue.multiple ? '[]' : ''
-      } };\n`;
+      tsProperty = isV5
+        ? `  ${attributeName}: ${tsType}${
+            attributeValue.multiple ? '[]' : ''
+          };\n`
+        : `  ${attributeName}: { data: ${tsType}${
+            attributeValue.multiple ? '[]' : ''
+          } };\n`;
     }
     // -------------------------------------------------
     // Enumeration
