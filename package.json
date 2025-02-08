@@ -1,14 +1,14 @@
 {
-  "name": "types-4-strapi",
-  "version": "1.0.22",
-  "description": "Typescript interface generator for Strapi 4 models",
+  "name": "strapi-schema-types",
+  "version": "1.0.0",
+  "description": "Typescript interface generator for Strapi 4 and 5 models",
   "main": "./src/index.js",
   "bin": {
     "t4s": "./src/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/francescolorenzetti/types-4-strapi.git"
+    "url": "git+https://github.com/Ar-mane/strapi-schema-types.git"
   },
   "keywords": [
     "strapi",
@@ -16,10 +16,10 @@
     "types",
     "generator"
   ],
-  "author": "Francesco Lorenzetti",
+  "author": "Ar-mane",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/francescolorenzetti/types-4-strapi/issues"
+    "url": "https://github.com/Ar-mane/strapi-schema-types/issues"
   },
-  "homepage": "https://github.com/francescolorenzetti/types-4-strapi#readme"
+  "homepage": "https://github.comm/Ar-mane/strapi-schema-types#readme"
 }
