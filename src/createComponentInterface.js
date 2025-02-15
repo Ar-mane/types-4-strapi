@@ -71,12 +71,10 @@ module.exports = (schemaPath, interfaceName, isV5) => {
           path: tsImportPath,
         });
       tsProperty = isV5
-        ? `  ${attributeName}: ${tsType}${
-            attributeValue.multiple ? '[]' : ''
-          };\n`
-        : `  ${attributeName}: { data: ${tsType}${
-            attributeValue.multiple ? '[]' : ''
-          } };\n`;
+        ? `  ${attributeName}: ${tsType}${attributeValue.multiple ? '[]' : ''
+        };\n`
+        : `  ${attributeName}: { data: ${tsType}${attributeValue.multiple ? '[]' : ''
+        } };\n`;
     }
     // -------------------------------------------------
     // Enumeration
@@ -97,6 +95,13 @@ module.exports = (schemaPath, interfaceName, isV5) => {
     ) {
       tsType = 'string';
       tsProperty = `  ${attributeName}: ${tsType};\n`;
+    }
+    // -------------------------------------------------
+    // CKEditor Field
+    // -------------------------------------------------
+    else if (attributeValue.type === 'customField' && attributeValue.customField === 'plugin::ckeditor5.CKEditor') {
+      tsPropertyType = 'string';
+      tsProperty = `    ${attributeName}: ${tsPropertyType};\n`;
     }
     // -------------------------------------------------
     // Json

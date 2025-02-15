@@ -189,3 +189,48 @@ if (componentCategoryFolders) {
     }
   }
 }
+
+
+
+// --------------------------------------------
+// API Routes
+// --------------------------------------------
+const routesDir = 'types/routes';
+
+if (!fs.existsSync(routesDir)) fs.mkdirSync(routesDir);
+
+if (apiFolders) {
+  const routes = apiFolders.map((apiFolder) => {
+    const schemaPath = `./src/api/${apiFolder}/content-types/${apiFolder}/schema.json`;
+    const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+    const routeName = pascalCase(apiFolder);
+    const name = schema.kind === 'collectionType' ? schema.info.pluralName : schema.info.singularName;
+
+    return { routeName, name, kind: schema.kind };
+  });
+
+  const sortedRoutes = routes.sort((a, b) => {
+    if (a.kind === b.kind) return a.name.localeCompare(b.name);
+    return a.kind === 'collectionType' ? -1 : 1;
+  });
+
+  const collections = sortedRoutes
+    .filter((route) => route.kind === 'collectionType')
+    .map((route) => `${route.routeName} = "${route.name}"`)
+    .join(',\n');
+
+  const singleTypes = sortedRoutes
+    .filter((route) => route.kind === 'singleType')
+    .map((route) => `${route.routeName} = "${route.name}"`)
+    .join(',\n');
+
+  const routesEnum = `export enum StrapiRoute {
+  /* collections */
+  ${collections},
+
+  /* singleTypes */
+  ${singleTypes}
+  }`;
+
+  fs.writeFileSync(`${routesDir}/StrapiRoute.ts`, routesEnum);
+}

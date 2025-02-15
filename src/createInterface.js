@@ -82,12 +82,10 @@ module.exports = (schemaPath, interfaceName, isV5) => {
           path: tsImportPath,
         });
       tsProperty = isV5
-        ? `    ${attributeName}: ${tsPropertyType}${
-            attributeValue.multiple ? '[]' : ''
-          };\n`
-        : `    ${attributeName}: { data: ${tsPropertyType}${
-            attributeValue.multiple ? '[]' : ''
-          } };\n`;
+        ? `    ${attributeName}: ${tsPropertyType}${attributeValue.multiple ? '[]' : ''
+        };\n`
+        : `    ${attributeName}: { data: ${tsPropertyType}${attributeValue.multiple ? '[]' : ''
+        } };\n`;
     }
     // -------------------------------------------------
     // Enumeration
@@ -106,6 +104,13 @@ module.exports = (schemaPath, interfaceName, isV5) => {
       attributeValue.type === 'email' ||
       attributeValue.type === 'uid'
     ) {
+      tsPropertyType = 'string';
+      tsProperty = `    ${attributeName}: ${tsPropertyType};\n`;
+    }
+    // -------------------------------------------------
+    // CKEditor Field
+    // -------------------------------------------------
+    else if (attributeValue.type === 'customField' && attributeValue.customField === 'plugin::ckeditor5.CKEditor') {
       tsPropertyType = 'string';
       tsProperty = `    ${attributeName}: ${tsPropertyType};\n`;
     }
