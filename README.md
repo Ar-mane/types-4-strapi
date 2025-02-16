@@ -1,6 +1,6 @@
 # Types-4-Strapi
 
-Typescript interface generator for Strapi 4 models.
+Typescript interface generator for Strapi 4 and 5 models.
 
 ## Install locally
 
@@ -23,7 +23,8 @@ Add t4s to your scripts:
 Then run with:
 
 ```bash
-npm run t4s
+npm run t4s          # For Strapi v4
+npm run t4s -- --v5  # For Strapi v5
 ```
 
 ## Install globally
@@ -35,12 +36,13 @@ npm i -g types-4-strapi
 Then run with:
 
 ```bash
-t4s
+t4s       # For Strapi v4
+t4s --v5  # For Strapi v5
 ```
 
 ## Attributes
 
-For some inscrutable reason, Strapi 4 returns objects where all the properties (aside from `id`) are wrapped into an `attributes` object. The resulting interfaces will look like this:
+For Strapi v4, the resulting interfaces will look like this:
 
 ```
 {
@@ -57,11 +59,11 @@ For some inscrutable reason, Strapi 4 returns objects where all the properties (
 }
 ```
 
-However, for some even more inscrutable reason, sometimes the same object is returned "flattened", without an `attributes` object. This is the case, for instance, for the `/api/users` endpoint, which returns an array of Users with the following structure:
+For Strapi v5, the resulting interfaces will look like this:
 
 ```
 {
-  id: number;
+  documentId: number;
   username: string;
   email: string;
   provider: string;
@@ -72,7 +74,9 @@ However, for some even more inscrutable reason, sometimes the same object is ret
 }
 ```
 
-The same "flat" structure is also required when submitting the body of `POST` and `PUT` requests. Here is an example using `fetch`.
+### Example Usage
+
+For Strapi v4:
 
 ```ts
 // correct
@@ -92,6 +96,18 @@ await fetch('https://project.com/api/users', {
       username: 'Jon Snow',
       email: 'jon.snow@housestark.com',
     },
+  }),
+});
+```
+
+For Strapi v5:
+
+```ts
+await fetch('https://project.com/api/users', {
+  method: 'POST',
+  body: JSON.stringify({
+    username: 'Jon Snow',
+    email: 'jon.snow@housestark.com',
   }),
 });
 ```
@@ -126,4 +142,22 @@ const response = await fetch('https://project.com/api/users');
 const json = await response.json();
 
 const users = json.data as Transformed<User>[];
+```
+
+For Strapi v5, the transformation type would be:
+
+```ts
+type TransformedV5<A> = Omit<A, 'id'> & {
+  documentId: number;
+};
+```
+
+Usage:
+
+```ts
+const response = await fetch('https://project.com/api/users');
+
+const json = await response.json();
+
+const users = json.data as TransformedV5<User>[];
 ```
