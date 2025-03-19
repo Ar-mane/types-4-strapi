@@ -37,7 +37,8 @@ fs.writeFileSync(`${typesDir}/Payload.ts`, payloadTsInterface);
 
 const userTsInterface = isV5
   ? `export interface User {
-  documentId: number;
+  id: number;
+  documentId: string;
   username: string;
   email: string;
   provider: string;
@@ -90,7 +91,8 @@ const mediaTsInterface = isV5
   ? `import { MediaFormat } from './MediaFormat';
 
 export interface Media {
-  documentId: number;
+  id: number;
+  documentId: string;
   name: string;
   alternativeText: string;
   caption: string;
@@ -106,6 +108,7 @@ export interface Media {
   provider: string;
   createdAt: Date;
   updatedAt: Date;
+  publishedAt: Date;
 }
 `
   : `import { MediaFormat } from './MediaFormat';

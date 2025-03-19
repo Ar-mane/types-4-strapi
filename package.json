@@ -1,6 +1,6 @@
 {
   "name": "strapi-schema-types",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Typescript interface generator for Strapi 4 and 5 models",
   "main": "./src/index.js",
   "bin": {

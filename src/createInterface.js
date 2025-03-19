@@ -4,8 +4,10 @@ const { pascalCase, isOptional } = require('./utils');
 module.exports = (schemaPath, interfaceName, isV5) => {
   var tsImports = [];
   var tsInterface = `\n`;
-  tsInterface += `export interface ${interfaceName} {\n`;
-  tsInterface += isV5 ? `  documentId: number;\n` : `  id: number;\n`;
+  tsInterface += `export interface ${interfaceName} {\n   id: number;\n`;
+  if (isV5) {
+    tsInterface += `  documentId: string;\n`;
+  }
   if (!isV5) {
     tsInterface += `  attributes: {\n`;
   }
@@ -178,6 +180,9 @@ module.exports = (schemaPath, interfaceName, isV5) => {
   if (!isV5) {
     tsInterface += `  }\n`;
   }
+  if (isV5)
+    tsInterface += `  createdAt: string;\n  updatedAt: string;\n publishedAt: string; \n`;
+
   tsInterface += '}\n';
   for (const tsImport of tsImports) {
     tsInterface =

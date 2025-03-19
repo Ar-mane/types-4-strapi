@@ -4,8 +4,7 @@ const { pascalCase, isOptional } = require('./utils');
 module.exports = (schemaPath, interfaceName, isV5) => {
   var tsImports = [];
   var tsInterface = `\n`;
-  tsInterface += `export interface ${interfaceName} {\n`;
-  tsInterface += isV5 ? `  documentId: number;\n` : `  id: number;\n`;
+  tsInterface += `export interface ${interfaceName} {\n  id: number;\n`;
   var schemaFile;
   var schema;
   try {

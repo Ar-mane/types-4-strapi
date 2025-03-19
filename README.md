@@ -66,7 +66,8 @@ For Strapi v5, the resulting interfaces will look like this:
 
 ```
 {
-  documentId: number;
+  id: number;
+  documentId: string;
   username: string;
   email: string;
   provider: string;
@@ -151,7 +152,7 @@ For Strapi v5, the transformation type would be:
 
 ```ts
 type TransformedV5<A> = Omit<A, 'id'> & {
-  documentId: number;
+  documentId: string;
 };
 ```
 
